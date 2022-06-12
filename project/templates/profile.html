@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+    Здравствуйте, {{ name }}!
+
+</h1>
+
+<div class="has-text-black has-background-white" style="padding: 5px;border: 1px solid lightgray;">
+    <p style="border-bottom: 1px solid lightgray;margin-bottom: 5px;">
+        Ваши недавние файлы 
+    </p>
+    <div style="max-height: 600px; overflow-y: auto; overflow-x: hidden;">
+        {% for file in files %}
+            <div>      
+                <div class="columns">
+                    <div class="column is-half" >
+                        <button class="button is-primary is-inverted">{{ file }}</button>
+                    </div>
+                    <div class="column is-half">
+                        <button class="button is-primary">Скачать</button>
+                        <button class="button  is-danger">Удалить</button>
+                    </div>
+                </div>
+                    
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,171 @@
+<h1 class="title has-text-centered">
+    Аппроксимация онлайн
+</h1>
+
+<div id="graph-data">
+    <div class="columns">
+        <div class="column is-two-fifths">
+            <div style="overflow: auto; max-height: 600px;">
+                <table class="table">
+                    <thead>
+                        <tr id="graph-table-thead-tr">
+
+                        </tr>
+                    </thead>
+
+                    <tfoot>
+                        <tr id="graph-table-tfoot-tr">
+
+                        </tr>
+                    </tfoot>
+
+                    <tbody id="graph-table-tbody">
+
+                    </tbody>
+                </table>
+            </div>
+            <br>
+
+            <h2>
+                Методы аппроксимации:
+            </h2>
+            <div id="checkboxes">
+
+            </div>
+        </div>
+        <div class="column is-three-fifths ">
+            <canvas id="myChart" class="has-background-white" width="800" height="630"></canvas>
+        </div>
+    </div>
+</div>
+
+<script>
+    let showGraphData = null;
+    const visiblemethods = ["X", "Y"];
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: []
+        }
+    });
+
+
+    const oncheckboxchange = (element, name) => {
+        const ischecked = element.checked;
+        if (ischecked) {
+            visiblemethods.push(name);
+        }
+        else {
+            const methodindex = visiblemethods.indexOf(name);
+            visiblemethods.splice(methodindex, 1);
+        }
+        showGraph(showGraphData);
+    }
+
+    const showGraph = (data) => {
+        console.log("data");
+        console.log(data);
+        let thead_tr = "";
+        let tbody = "";
+        let tfoot = '';
+
+        thead_tr = thead_tr + `<th>№</th>`
+        for (let i = 0; i < data.length; i++) {
+
+            if (visiblemethods.includes(data[i].name)) {
+                thead_tr = thead_tr + `<th>${data[i].name}</th>`
+            }
+        }
+
+        $("#graph-table-thead-tr").html(thead_tr)
+
+        const row_count = data[0].data.length;
+
+        for (let i = 0; i < row_count; i++) {
+
+            let row_td = "";
+            row_td = row_td + `<td>${i + 1}</td>`
+            for (let j = 0; j < data.length; j++) {
+
+                if (visiblemethods.includes(data[j].name)) {
+                    const td = (data[j].data[i]).toFixed(4);
+                    row_td = row_td + `<td>${td}</td>`
+                }
+            }
+            tbody = tbody + `<tr>${row_td}</tr>`
+        }
+
+        $("#graph-table-tbody").html(tbody)
+
+        tfoot = tfoot + "<td colspan='3'>Коэффициент детерминации R^2</td>"
+
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].name == "X" || data[i].name == "Y")
+                continue;
+
+            if (!visiblemethods.includes(data[i].name))
+                continue;
+            tfoot = tfoot + `<td>${data[i].coef.toFixed(4)}</td>`
+        }
+        
+        $("#graph-table-tfoot-tr").html(tfoot)
+
+        drawgraphs(data);
+    }
+
+    var dynamicColors = function () {
+        var r = Math.floor(Math.random() * 200);
+        var g = Math.floor(Math.random() * 200);
+        var b = Math.floor(Math.random() * 200);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    };
+
+    const drawgraphs = (data) => {
+        const xdata = data.find(g => g.name == "X");
+        const datasets = [];
+
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].name == "X")
+                continue;
+
+            if (!visiblemethods.includes(data[i].name))
+                continue;
+
+            datasets.push({
+                label: data[i].name,
+                data: data[i].data,
+                ...(data[i].name == "Y" ? { borderDash: [5, 5] } : {}),
+                borderColor: dynamicColors()
+            });
+        }
+
+        myChart.data.labels = xdata.data;
+        myChart.data.datasets = datasets;
+        myChart.update();
+    }
+
+
+    const showGraphFirst = (data) => {
+        showGraphData = data;
+        showGraph(data);
+        let checkboxes = "";
+
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].name == "X" || data[i].name == "Y")
+                continue;
+            checkboxes = checkboxes +
+                `<div>
+                <label class="checkbox">
+                    <input type="checkbox" onchange="oncheckboxchange(this, '${data[i].name}')">
+                        ${data[i].name}
+                 </label>
+                 <a href= "${data[i].href}" target="_blank"> <u>(Подробнее)</u></a>
+                 </div>`
+
+        }
+
+        $("#checkboxes").html(checkboxes)
+    }
+</script>

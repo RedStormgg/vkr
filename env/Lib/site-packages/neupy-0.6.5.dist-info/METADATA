@@ -1,0 +1,32 @@
+Metadata-Version: 2.1
+Name: neupy
+Version: 0.6.5
+Summary: NeuPy is a Python library for Artificial Neural Networks and Deep Learning.
+Home-page: http://neupy.com
+Author: Yurii Shevhcuk
+Author-email: mail@itdxer.com
+License: MIT
+Keywords: neural networks,deep learning
+Platform: UNKNOWN
+Classifier: Intended Audience :: Developers
+Classifier: Natural Language :: English
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Dist: numpy (>=1.9.0)
+Requires-Dist: scipy (>=0.19.0)
+Requires-Dist: Theano (==1.0.0)
+Requires-Dist: matplotlib (>=1.5.1)
+Requires-Dist: graphviz (==0.5.1)
+Requires-Dist: tableprint (==0.7.1)
+Requires-Dist: progressbar2 (==3.34.3)
+
+UNKNOWN
+
+

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="approx-select-area">
+    <h1 class="title has-text-centered">
+    Аппроксимация онлайн 
+    </h1>
+
+    <div class="is-flex is-flex-direction-column">
+        <div style="margin: auto;">
+            <form id="upload-container" method="POST" action="upload">
+                <img id="upload-image" src="static/upload.png">
+                <div>
+                    <input id="file-input" type="file" name="file">
+                    <label for="file-input">Выберите файл</label>
+                    <span>или перетащите его сюда</span>
+                    <div style="color: red; font-weight: bold;text-align:  center;" id="file-ext-error" class="is-invisible">
+                        Недопустимый формат файла! <br> (Разрешен ".csv")
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="approx-graph-area" class="is-hidden">
+    {% include 'graph.html' %}
+
+    <br>
+
+    <a href="/"><u>Загрузить новые данные</u></a>
+</div>
+
+
+<script>
+    $('#file-input').focus(function() {
+         $('label').addClass('focus');
+    })
+    .focusout(function() {
+         $('label').removeClass('focus');
+    });
+    
+    var dropZone = $('#upload-container');
+
+    dropZone.on('drag dragstart dragend dragover dragenter dragleave drop', function(){
+         return false;
+    });
+
+    dropZone.on('dragover dragenter', function() {
+        dropZone.addClass('dragover');
+    });
+
+
+    dropZone.on('dragleave', function(e) {
+        let dx = e.pageX - dropZone.offset().left;
+        let dy = e.pageY - dropZone.offset().top;
+        if ((dx < 0) || (dx > dropZone.width()) || (dy < 0) || (dy > dropZone.height())) {
+            dropZone.removeClass('dragover');
+        };
+    });
+
+    /**
+     * @param {File} file
+     **/
+    const fileExtUploadHandler = (file) => {
+        var fd = new FormData;
+        fd.append('data', file);
+
+        $.ajax({
+            url: dropZone.attr('action'),
+            type: dropZone.attr('method'),
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                $("#approx-select-area").addClass("is-hidden");
+                $("#approx-graph-area").removeClass("is-hidden");
+                showGraphFirst(data.graphs);
+            }
+        });
+    }
+
+    const fileUploadHandler = (file) => {
+        if (file === undefined)
+            return;
+        console.log(file);
+
+        const ext = file.name.split('.').pop();
+        const acceptableext = ["csv", "xls","xlsx"];
+        if (!acceptableext.includes(ext)) {
+            $("#file-ext-error").removeClass("is-invisible");
+            return;
+        }
+
+        fileExtUploadHandler(file);
+    };
+
+    dropZone.on('drop', function(e) {
+        dropZone.removeClass('dragover');
+        const file = e.originalEvent.dataTransfer.files[0];
+        fileUploadHandler(file);
+    });
+
+    $('#file-input').change(function() {
+        const file = this.files[0];
+        fileUploadHandler(file);
+    });
+
+</script>
+
+{% endblock %}
