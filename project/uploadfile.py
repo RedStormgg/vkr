@@ -19,6 +19,7 @@ def upload_post():
         return "нет файла"
 
     file = request.files['data']
+    noSave = request.form['noSave'] == "true"
     
     if file.filename == '':
         return "нет файла"
@@ -40,7 +41,7 @@ def upload_post():
         xlist.append(x)
         ylist.append(y)
 
-    if (current_user.is_authenticated):
+    if (current_user.is_authenticated and not noSave):
         file.stream.seek(0)
         userDirpath = getUserDirPath(current_user.name, current_user.email)
         file.save(userDirpath + "/" + str(datetime.now()).replace(":","-").replace(" ","_"))

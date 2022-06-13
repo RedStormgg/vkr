@@ -8,8 +8,8 @@
 
     <div class="is-flex is-flex-direction-column">
         <div style="margin: auto;">
-            <form id="upload-container" method="POST" action="upload">
-                <img id="upload-image" src="static/upload.png">
+            <form id="upload-container" method="POST" action="/upload">
+                <img id="upload-image" src="/static/upload.png">
                 <div>
                     <input id="file-input" type="file" name="file">
                     <label for="file-input">Выберите файл</label>
@@ -31,8 +31,14 @@
     <a href="/"><u>Загрузить новые данные</u></a>
 </div>
 
+<div id="approx-graph-loading" class="is-hidden" style="font-size: 30px;">
+    Загрузка данных...
+</div>
 
 <script>
+    const isExistFile = "{{ path != null }}" === "True";
+    const path = "{{ path }}";
+    
     $('#file-input').focus(function() {
          $('label').addClass('focus');
     })
@@ -62,9 +68,10 @@
     /**
      * @param {File} file
      **/
-    const fileExtUploadHandler = (file) => {
+    const fileExtUploadHandler = (file, noSave = false) => {
         var fd = new FormData;
         fd.append('data', file);
+        fd.append('noSave', noSave);
 
         $.ajax({
             url: dropZone.attr('action'),
@@ -75,7 +82,23 @@
             success: function(data) {
                 $("#approx-select-area").addClass("is-hidden");
                 $("#approx-graph-area").removeClass("is-hidden");
+                $("#approx-graph-loading").addClass("is-hidden");
                 showGraphFirst(data.graphs);
+            }
+        });
+    }
+    
+    if (isExistFile) {
+        $("#approx-select-area").addClass("is-hidden");
+        $("#approx-graph-loading").removeClass("is-hidden");
+        $.ajax({
+            url: `/files/${path}`,
+            type: 'GET',
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                const file = new File([new Blob([data])], "fname");
+                fileExtUploadHandler(file, noSave=true);
             }
         });
     }

@@ -12,19 +12,30 @@
     </p>
     <div style="max-height: 600px; overflow-y: auto; overflow-x: hidden;">
         {% for file in files %}
-            <div>      
-                <div class="columns">
-                    <div class="column is-half" >
-                        <button class="button is-primary is-inverted">{{ file }}</button>
-                    </div>
-                    <div class="column is-half">
-                        <button class="button is-primary">Скачать</button>
-                        <button class="button  is-danger">Удалить</button>
-                    </div>
+            <div class="is-flex is-flex-direction-row" style="margin-bottom: 5px;">
+                <div style="width: 50%;">
+                    <a href="/exist/{{ file }}" class="button is-primary is-inverted">{{ file }}</a>
                 </div>
-                    
+                <div style="width: 50%;">
+                    <a href="/files/{{ file }}" class="button is-primary">Скачать</a>
+                    <button class="button  is-danger" onclick="deleteFile('{{ file }}')">Удалить</button>
+                </div>
             </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    const deleteFile = (filename) => {
+        $.ajax({
+            url: `/delete/${filename}`,
+            type: 'GET',
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                window.location.reload();
+            }
+        });
+    }
+</script>
 {% endblock %}

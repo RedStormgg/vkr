@@ -298,7 +298,7 @@ class GRNN(BaseEstimator, RegressorMixin):
             return self
         
         
-        if self.calibration is 'warm_start':
+        if self.calibration == 'warm_start':
             print('Executing warm start...')
             self.bnds = (bounds,)           
             x0 = np.asarray(self.sigma)
@@ -311,7 +311,7 @@ class GRNN(BaseEstimator, RegressorMixin):
             #print ('Executing gradient search...')
             calibrate_sigma(self)
             print('Gradient search concluded. The optimum sigma is ' + str(self.sigma))
-        elif self.calibration is 'gradient_search':
+        elif self.calibration == 'gradient_search':
             #print ('Executing gradient search...')
             self.sigma = np.full(len(self.X_[0]), self.sigma)
             self.bnds = (bounds,)*len(self.X_[0])
