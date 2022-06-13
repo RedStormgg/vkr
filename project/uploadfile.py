@@ -32,12 +32,12 @@ def upload_post():
         lineindex = lineindex + 1
         xy = line.split(";")
         if (len(xy) != 2):
-            return "Несоответствие данных X и Y!"
+            return ("Несоответствие данных X и Y!", 400)
         try:
             x = float(xy[0])
             y = float(xy[1])
         except:
-            return "Неверный формат данных! Строка " + str(lineindex) + ": " + line
+            return ("Неверный формат данных! Строка " + str(lineindex) + ": \"" + line + "\"", 400)
         xlist.append(x)
         ylist.append(y)
 

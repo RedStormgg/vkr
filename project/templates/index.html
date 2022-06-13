@@ -17,6 +17,9 @@
                     <div style="color: red; font-weight: bold;text-align:  center;" id="file-ext-error" class="is-invisible">
                         Недопустимый формат файла! <br> (Разрешен ".csv")
                     </div>
+                    <div style="color: red; font-weight: bold;text-align:  center;" id="file-format-error" class="is-invisible">
+                        Недопустимый формат файла! <br> ()
+                    </div>
                 </div>
             </form>
         </div>
@@ -84,6 +87,23 @@
                 $("#approx-graph-area").removeClass("is-hidden");
                 $("#approx-graph-loading").addClass("is-hidden");
                 showGraphFirst(data.graphs);
+            },
+            error: function(jqXHR, exception) {
+                let msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Нет соединения';
+                } else if (jqXHR.status == 400) {
+                    msg = jqXHR.responseText;
+                } else if (jqXHR.status == 404) {
+                    msg = 'Ошибка 404';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Ошибка сервера';
+                } else {
+                    msg = 'Неизвестная ошибка';
+                }
+                
+                $("#file-format-error").removeClass("is-invisible");
+                $("#file-format-error").html(`Ошибка<br>${msg}`);
             }
         });
     }
